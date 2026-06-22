@@ -3,11 +3,26 @@ import ReactDOM from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { routeTree } from './routeTree.gen';
-import './styles.css'; // අගට .css කෑල්ල අනිවාර්යයෙන්ම එක් කරන්න
+import './styles.css';
 
-// නිවැරදි TanStack Router එක මෙතනදීම සාදන්න
+// 1. Query Client එක සාදන්න
 const queryClient = new QueryClient();
-const router = createRouter({ routeTree });
+
+// 2. Router එක සාදා Lovable එකට අවශ්‍ය context එක මෙතනදීම pass කරන්න
+const router = createRouter({
+  routeTree,
+  context: {
+    queryClient,
+  },
+  defaultPreload: 'intent',
+});
+
+// 3. TypeScript වලට Router එකේ වර්ගය හඳුන්වා දීම (Register the router)
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
 
 const rootElement = document.getElementById('root');
 
